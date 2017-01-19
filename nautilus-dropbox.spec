@@ -1,0 +1,107 @@
+%global lib /usr/lib
+%define glib_version 2.14.0
+%define nautilus_version 2.16.0
+%define libgnome_version 2.16.0
+%define pygtk2_version 2.12
+%define pygpgme_version 0.1
+
+Name:		nautilus-dropbox
+Version:	2015.10.28
+Release:	2%{?dist}
+Summary:	Dropbox integration for Nautilus
+Group:		User Interface/Desktops
+License:	GPLv3
+URL:		https://www.dropbox.com/
+Source0:	https://linux.dropboxstatic.com/packages/%{name}-%{version}.tar.bz2
+Source1:	dropbox.service
+Source2:	dropbox@.service
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id} -u -n)
+
+BuildRequires:	nautilus-devel >= %{nautilus_version}
+BuildRequires:	glib2-devel >= %{glib_version}
+BuildRequires:	python-docutils
+BuildRequires:  cairo-devel
+BuildRequires:  gtk2-devel
+BuildRequires:  atk-devel
+BuildRequires:  pango-devel
+BuildRequires:	pygtk2-devel
+BuildRequires:  libtool
+BuildRequires:  pygobject2-devel
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  desktop-file-utils
+Requires:	nautilus-extensions >= %{nautilus_version}
+Requires:	dropbox >= %{version}-%{release}
+
+
+%description
+Nautilus Dropbox is an extension that integrates
+the Dropbox web service with your GNOME Desktop.
+
+%package -n dropbox
+Summary:        Client for Linux
+Group:          User Interface/Desktops
+BuildArch:      noarch
+Requires:	pygtk2 >= %{pygtk2_version}
+Requires:       hicolor-icon-theme
+Requires:	glib2 >= %{glib_version}
+Recommends:	python2-pygpgme
+
+%description -n dropbox
+Dropbox allows you to sync your files online and across
+your computers automatically.
+
+%prep
+%setup -q
+%build
+export DISPLAY=$DISPLAY
+%configure --disable-static
+make %{?_smp_mflags}
+%install
+
+%{make_install}
+
+install -Dm644 %{S:1} %{buildroot}/usr/lib/systemd/user/dropbox.service
+install -Dm644 %{S:2} %{buildroot}/usr/lib/systemd/system/dropbox@.service
+
+find $RPM_BUILD_ROOT%{_libdir} -type f -name '*.la' -delete -print
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%post -n dropbox
+/usr/bin/update-desktop-database &> /dev/null || :
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+
+
+%postun -n dropbox
+/usr/bin/update-desktop-database &> /dev/null || :
+
+%posttrans
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+
+%clean
+rm -rf \$RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root,-)
+%doc
+%{_libdir}/nautilus/extensions-3.0/*.so*
+
+%files -n dropbox
+%{_datadir}/icons/hicolor/*
+%{_datadir}/nautilus-dropbox/emblems/*
+%{_bindir}/dropbox
+%{_datadir}/applications/dropbox.desktop
+%{_datadir}/man/man1/dropbox.1.gz
+%{lib}/systemd/user/dropbox.service
+%{lib}/systemd/system/dropbox@.service
+
+%changelog
+
+* Wed Jan 18 2017 David Vásquez <davidva AT tutanota DOT com> - 2015.10.28-2
+- Upstream 
+
+* Tue Mar 29 2016 Dropbox <support@dropbox.com> - 2015.10.28-1
+- Initial build
