@@ -1,0 +1,18 @@
+diff -ruN orig/dropbox.in new/dropbox.in
+--- orig/dropbox.in	2014-04-18 12:27:39.000000000 -0600
++++ new/dropbox.in	2018-07-27 16:01:24.337203624 -0600
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/python2
+ #
+ # Copyright (c) Dropbox, Inc.
+ #
+diff -ruN orig/rst2man.py new/rst2man.py
+--- orig/rst2man.py	2010-04-08 17:21:32.000000000 -0600
++++ new/rst2man.py	2018-07-27 16:02:13.163647080 -0600
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python2
+ 
+ # Author: 
+ # Contact: grubert@users.sf.net

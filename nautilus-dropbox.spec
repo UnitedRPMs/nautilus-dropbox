@@ -6,25 +6,27 @@
 %define pygpgme_version 0.1
 
 Name:		nautilus-dropbox
-Version:	2015.10.28
-Release:	2%{?dist}
+Version:	1.6.2
+Epoch:		1
+Release:	1%{?dist}
 Summary:	Dropbox integration for Nautilus
 Group:		User Interface/Desktops
 License:	GPLv3
 URL:		https://www.dropbox.com/
-Source0:	https://linux.dropboxstatic.com/packages/%{name}-%{version}.tar.bz2
+Source0:	https://linux.dropboxstatic.com/packages/nautilus-dropbox-%{version}.tar.bz2
 Source1:	dropbox.service
 Source2:	dropbox@.service
+Patch:		python_fix.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id} -u -n)
 
 BuildRequires:	nautilus-devel >= %{nautilus_version}
 BuildRequires:	glib2-devel >= %{glib_version}
-BuildRequires:	python-docutils
+BuildRequires:	python2-docutils
 BuildRequires:  cairo-devel
 BuildRequires:  gtk2-devel
 BuildRequires:  atk-devel
 BuildRequires:  pango-devel
-BuildRequires:	pygtk2-devel
+BuildRequires:	pygtk2-devel 
 BuildRequires:  libtool
 BuildRequires:  pygobject2-devel
 BuildRequires:  autoconf
@@ -52,10 +54,15 @@ Dropbox allows you to sync your files online and across
 your computers automatically.
 
 %prep
-%setup -q
+%autosetup -n %{name}-%{version} -p1
 %build
+
+mkdir -p "$HOME/bin/"
+ln -sfn /usr/bin/python2.7 $HOME/bin/python
+export PATH="$HOME/bin/:$PATH"
+
 export DISPLAY=$DISPLAY
-%configure --disable-static
+PYTHON=/usr/bin/python2 %configure --disable-static
 make %{?_smp_mflags}
 %install
 
@@ -99,6 +106,10 @@ rm -rf \$RPM_BUILD_ROOT
 %{lib}/systemd/system/dropbox@.service
 
 %changelog
+
+* Thu Jul 26 2018 David Va <davidva AT tuta DOT io> 1.6.2-1
+- Updated to 1.6.2
+- Epoch solves the bad and old version
 
 * Wed Jan 18 2017 David Vásquez <davidva AT tutanota DOT com> - 2015.10.28-2
 - Upstream 
