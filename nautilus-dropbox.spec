@@ -5,15 +5,18 @@
 %define pygtk2_version 2.12
 %define pygpgme_version 0.1
 
+%global commit0 fb4aba411c317b258bab15ccc15003a5d46e9871
+%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+
 Name:		nautilus-dropbox
-Version:	1.6.2
+Version:	2.10.0
 Epoch:		1
 Release:	1%{?dist}
 Summary:	Dropbox integration for Nautilus
 Group:		User Interface/Desktops
 License:	GPLv3
 URL:		https://www.dropbox.com/
-Source0:	https://linux.dropboxstatic.com/packages/nautilus-dropbox-%{version}.tar.bz2
+Source0:	https://github.com/dropbox/nautilus-dropbox/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 Source1:	dropbox.service
 Source2:	dropbox@.service
 Patch:		python_fix.patch
@@ -31,6 +34,7 @@ BuildRequires:  libtool
 BuildRequires:  pygobject2-devel
 BuildRequires:  autoconf
 BuildRequires:  automake
+BuildRequires:	gnome-common
 BuildRequires:  desktop-file-utils
 Requires:	nautilus-extensions >= %{nautilus_version}
 Requires:	dropbox >= %{version}-%{release}
@@ -54,7 +58,9 @@ Dropbox allows you to sync your files online and across
 your computers automatically.
 
 %prep
-%autosetup -n %{name}-%{version} -p1
+%autosetup -n %{name}-%{commit0} -p1
+./autogen.sh
+
 %build
 
 mkdir -p "$HOME/bin/"
@@ -106,6 +112,9 @@ rm -rf \$RPM_BUILD_ROOT
 %{lib}/systemd/system/dropbox@.service
 
 %changelog
+
+* Wed Sep 26 2018 David Va <davidva AT tuta DOT io> 2.10.0-1
+- Updated to 2.10.0
 
 * Thu Jul 26 2018 David Va <davidva AT tuta DOT io> 1.6.2-1
 - Updated to 1.6.2

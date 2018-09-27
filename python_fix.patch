@@ -1,15 +1,55 @@
+diff -ruN orig/configure.ac new/configure.ac
+--- orig/configure.ac	2018-08-27 11:52:41.000000000 -0600
++++ new/configure.ac	2018-09-26 22:11:55.246159264 -0600
+@@ -29,16 +29,16 @@
+ PKG_CHECK_MODULES(NAUTILUS, libnautilus-extension >= $NAUTILUS_REQUIRED)
+ PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED)
+ 
+-AC_PATH_PROG([PYTHON], [python])
++AC_PATH_PROG([PYTHON], [python2])
+ 
+-AC_PATH_PROG([RST2MAN], [rst2man], [python rst2man.py])
++AC_PATH_PROG([RST2MAN], [rst2man], [python2 rst2man.py])
+ AC_SUBST(RST2MAN)
+ 
+ # define module checking macro
+ AC_DEFUN([PYTHON_CHECK_MODULE], [
+ AC_MSG_CHECKING([for $1])
+ 
+-cat <<EOF | python
++cat <<EOF | python2
+ try:
+  import $2
+ except:
 diff -ruN orig/dropbox.in new/dropbox.in
---- orig/dropbox.in	2014-04-18 12:27:39.000000000 -0600
-+++ new/dropbox.in	2018-07-27 16:01:24.337203624 -0600
+--- orig/dropbox.in	2018-08-27 11:52:41.000000000 -0600
++++ new/dropbox.in	2018-09-26 22:06:33.558529255 -0600
 @@ -1,4 +1,4 @@
--#!/usr/bin/python
+-#!/usr/bin/env python2
 +#!/usr/bin/python2
  #
  # Copyright (c) Dropbox, Inc.
  #
+diff -ruN orig/Makefile.am new/Makefile.am
+--- orig/Makefile.am	2018-08-27 11:52:41.000000000 -0600
++++ new/Makefile.am	2018-09-26 22:12:45.098327082 -0600
+@@ -6,11 +6,11 @@
+ man_MANS = dropbox.1
+ 
+ dropbox: dropbox.in serializeimages.py
+-	python serializeimages.py $(PACKAGE_VERSION) $(datadir)/applications < dropbox.in > dropbox
++	python2 serializeimages.py $(PACKAGE_VERSION) $(datadir)/applications < dropbox.in > dropbox
+ 	chmod +x dropbox
+ 
+ dropbox.1: dropbox.txt.in dropbox docgen.py
+-	python docgen.py $(PACKAGE_VERSION) < dropbox.txt.in > dropbox.txt
++	python2 docgen.py $(PACKAGE_VERSION) < dropbox.txt.in > dropbox.txt
+ 	$(RST2MAN) dropbox.txt > dropbox.1
+ 
+ SUBDIRS = data src
 diff -ruN orig/rst2man.py new/rst2man.py
---- orig/rst2man.py	2010-04-08 17:21:32.000000000 -0600
-+++ new/rst2man.py	2018-07-27 16:02:13.163647080 -0600
+--- orig/rst2man.py	2018-08-27 11:52:41.000000000 -0600
++++ new/rst2man.py	2018-09-26 22:07:17.549794895 -0600
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
 +#!/usr/bin/python2
