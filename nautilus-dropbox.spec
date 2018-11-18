@@ -5,13 +5,13 @@
 %define pygtk2_version 2.12
 %define pygpgme_version 0.1
 
-%global commit0 fb4aba411c317b258bab15ccc15003a5d46e9871
+%global commit0 cdc42c4352ebf095adc5f4cc4dbddd8b2fb11f97
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 Name:		nautilus-dropbox
 Version:	2.10.0
 Epoch:		1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Dropbox integration for Nautilus
 Group:		User Interface/Desktops
 License:	GPLv3
@@ -112,6 +112,9 @@ rm -rf \$RPM_BUILD_ROOT
 %{lib}/systemd/system/dropbox@.service
 
 %changelog
+
+* Fri Nov 16 2018 David Va <davidva AT tuta DOT io> 2.10.0-2
+- Updated to current commit
 
 * Wed Sep 26 2018 David Va <davidva AT tuta DOT io> 2.10.0-1
 - Updated to 2.10.0
