@@ -5,13 +5,13 @@
 %define pygtk2_version 2.12
 %define pygpgme_version 0.1
 
-%global commit0 cdc42c4352ebf095adc5f4cc4dbddd8b2fb11f97
+%global commit0 52b774e05b7c626f566b8a6d9f6fb66879d2f938
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 Name:		nautilus-dropbox
 Version:	2.10.0
 Epoch:		1
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	Dropbox integration for Nautilus
 Group:		User Interface/Desktops
 License:	GPLv3
@@ -22,9 +22,9 @@ Source2:	dropbox@.service
 Patch:		python_fix.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id} -u -n)
 
+BuildRequires:  pkgconfig(python3)
 BuildRequires:	nautilus-devel >= %{nautilus_version}
 BuildRequires:	glib2-devel >= %{glib_version}
-BuildRequires:	python2-docutils
 BuildRequires:  cairo-devel
 BuildRequires:  gtk2-devel
 BuildRequires:  atk-devel
@@ -36,6 +36,8 @@ BuildRequires:  autoconf
 BuildRequires:  automake
 BuildRequires:	gnome-common
 BuildRequires:  desktop-file-utils
+BuildRequires:  python3-docutils
+BuildRequires:	python3-gobject
 Requires:	nautilus-extensions >= %{nautilus_version}
 Requires:	dropbox >= %{version}-%{release}
 
@@ -51,7 +53,7 @@ BuildArch:      noarch
 Requires:	pygtk2 >= %{pygtk2_version}
 Requires:       hicolor-icon-theme
 Requires:	glib2 >= %{glib_version}
-Recommends:	python2-pygpgme
+Recommends:	python3-pygpgme
 
 %description -n dropbox
 Dropbox allows you to sync your files online and across
@@ -63,13 +65,10 @@ your computers automatically.
 
 %build
 
-mkdir -p "$HOME/bin/"
-ln -sfn /usr/bin/python2.7 $HOME/bin/python
-export PATH="$HOME/bin/:$PATH"
-
 export DISPLAY=$DISPLAY
-PYTHON=/usr/bin/python2 %configure --disable-static
+PYTHON=%{__python3} %configure --disable-static
 make %{?_smp_mflags}
+
 %install
 
 %{make_install}
@@ -112,6 +111,10 @@ rm -rf \$RPM_BUILD_ROOT
 %{lib}/systemd/system/dropbox@.service
 
 %changelog
+
+* Mon Sep 21 2020 David Va <davidva AT tuta DOT io> 2.10.0-3
+- Updated to current commit
+- Migration to python3
 
 * Fri Nov 16 2018 David Va <davidva AT tuta DOT io> 2.10.0-2
 - Updated to current commit
