@@ -5,13 +5,15 @@
 %define pygtk2_version 2.12
 %define pygpgme_version 0.1
 
-%global commit0 52b774e05b7c626f566b8a6d9f6fb66879d2f938
+%define _legacy_common_support 1
+
+%global commit0 6a9abace8f3dfc062de912c07a008d707cedcdb0
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 Name:		nautilus-dropbox
 Version:	2.10.0
 Epoch:		1
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	Dropbox integration for Nautilus
 Group:		User Interface/Desktops
 License:	GPLv3
@@ -65,13 +67,17 @@ your computers automatically.
 
 %build
 
+export CXXFLAGS="%{optflags}"
+export CFLAGS="%{optflags}"
+CFLAGS+=' -fcommon'
+
 export DISPLAY=$DISPLAY
 PYTHON=%{__python3} %configure --disable-static
-make %{?_smp_mflags}
+%make_build
 
 %install
 
-%{make_install}
+%make_install
 
 install -Dm644 %{S:1} %{buildroot}/usr/lib/systemd/user/dropbox.service
 install -Dm644 %{S:2} %{buildroot}/usr/lib/systemd/system/dropbox@.service
@@ -111,6 +117,9 @@ rm -rf \$RPM_BUILD_ROOT
 %{lib}/systemd/system/dropbox@.service
 
 %changelog
+
+* Sat Mar 27 2021 David Va <davidva AT tuta DOT io> 2.10.0-4
+- Updated to current commit
 
 * Mon Sep 21 2020 David Va <davidva AT tuta DOT io> 2.10.0-3
 - Updated to current commit
